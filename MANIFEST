@@ -1,0 +1,16 @@
+Build.PL
+Changes
+lib/Simo/Wrapper.pm
+Makefile.PL
+MANIFEST
+META.yml
+README
+t/00-load.t
+t/01-get_attrs.t
+t/02-get_attrs_as_hash.t
+t/03-set_attrs.t
+t/04-run_methods.t
+t/05-new.t
+t/boilerplate.t
+t/pod-coverage.t
+t/pod.t
