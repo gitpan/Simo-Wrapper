@@ -2,7 +2,7 @@ package Simo::Wrapper;
 use Simo;
 use Carp;
 
-our $VERSION = '0.01_03';
+our $VERSION = '0.01_04';
 
 use Simo::Constrain qw( is_class_name is_object );
 
@@ -240,6 +240,45 @@ sub thaw{
     return Storable::thaw( $freezed );
 }
 
+
+sub cycle_attrs{
+    my ( $self, $code, @attrs ) = @_;
+    
+    my $obj = $self->obj;
+    croak "'cycle_attrs' must be called from object." unless is_object( $obj );
+    
+    croak "First argument must be code reference." unless ref $code eq 'CODE';
+    
+    foreach my $attr ( @attrs ){
+        croak "'$attr' is not exist." unless $obj->can( $attr );
+        
+        $obj->$attr unless exists $obj->{ $attr }; # initialized if attr is not called yet.
+        
+        if( ref $obj->{ $attr } eq 'ARRAY' ){
+            foreach my $i ( 0 .. @{ $obj->{ $attr } } - 1 ){
+                my $info = { type => 'ARRAY', attr => $attr, index => $i, self => $obj };
+                
+                my $ret = $code->( $obj->{ $attr }[ $i ], $info );
+                $obj->{ $attr }[ $i ] = $ret unless $info->{ no_ret };
+            }
+        }
+        elsif( ref $obj->{ $attr } eq 'HASH' ){
+            foreach my $key ( keys %{ $obj->{ $attr } } ){
+                my $info = { type => 'HASH', attr => $attr, key => $key, self => $obj };
+                
+                my $ret = $code->( $obj->{ $attr }{ $key }, $info );
+                $obj->{ $attr }{ $key } = $ret unless $info->{ no_ret };
+            }
+        }
+        else{
+            my $info = { type => 'SCALAR', attr => $attr, self => $obj };
+            my $ret = $code->( $obj->{ $attr }, $info );
+            $obj->{ $attr } =  $ret unless $info->{ no_ret };
+        }
+    }
+}
+
+
 =head1 NAME
 
 Simo::Wrapper - Object wrapper to manipulate attrs and methods.
@@ -248,7 +287,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.01_03
+Version 0.01_04
 
 =cut
 

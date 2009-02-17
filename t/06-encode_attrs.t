@@ -32,12 +32,6 @@ use Simo::Wrapper;
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    $t->encode_attrs( 'utf8', 'a2' );
-    is_deeply( $t->obj->a2, [ 'あ', 'い' ], 'array string encode' );
-}
-
-{
-    my $t = Simo::Wrapper->create( obj => T1->new );
     $t->encode_attrs( 'utf8', 'a3' );
     is_deeply( $t->obj->a3, { a => 'あ', b => 'い' }, 'hash string encode' );
 }
