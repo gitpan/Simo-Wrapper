@@ -2,7 +2,7 @@ package Simo::Wrapper;
 use Simo;
 use Carp;
 
-our $VERSION = '0.01_01';
+our $VERSION = '0.01_03';
 
 use Simo::Constrain qw( is_class_name is_object );
 
@@ -123,6 +123,123 @@ sub _SIMO_parse_run_methods_args{
     return $method_infos;
 }
 
+sub encode_attrs{
+    my ( $self, $encoding, @attrs ) = @_;
+    
+    my $obj = $self->obj;
+    croak "'encode_attrs' must be called from object." unless is_object( $obj );
+    
+    require Encode;
+    foreach my $attr ( @attrs ){
+        croak "'$attr' is not exist." unless $obj->can( $attr );
+        
+        $obj->$attr unless exists $obj->{ $attr }; # initialized if attr is not called yet.
+        
+        if( ref $obj->{ $attr } eq 'ARRAY' ){
+            foreach my $i ( 0 .. @{ $obj->{ $attr } } - 1 ){
+                if( ref $obj->{ $attr }[$i] ){
+                    carp "\$self->{ '$attr' }[ $i ] must be string. Encode is not done.";
+                }
+                else{
+                    $obj->{ $attr }[$i]
+                        = Encode::encode( $encoding, $obj->{ $attr }[$i] );
+                }
+            }
+        }
+        elsif( ref $obj->{ $attr } eq 'HASH' ){
+            foreach my $key ( keys %{ $obj->{ $attr } } ){
+                if( ref $obj->{ $attr }{ $key } ){
+                    carp "\$self->{ '$attr' }{ '$key' } must be string. Encode is not done.";
+                }
+                else{
+                    $obj->{ $attr }{ $key } 
+                        = Encode::encode( $encoding, $obj->{ $attr }{ $key } );
+                }
+            }
+        }
+        else{
+            if( ref $obj->{ $attr } ){
+                carp "\$self->{ '$attr' } must be string or array ref or hash ref. Encode is not done.";
+            }
+            else{
+                $obj->{ $attr } = Encode::encode( $encoding, $obj->{ $attr } );
+            }
+        }
+    }
+}
+
+sub decode_attrs{
+    my ( $self, $encoding, @attrs ) = @_;
+    
+    my $obj = $self->obj;
+    croak "'decode_attrs' must be called from object." unless is_object( $obj );
+    
+    require Encode;
+    foreach my $attr ( @attrs ){
+        croak "'$attr' is not exist." unless $obj->can( $attr );
+        
+        $obj->$attr unless exists $obj->{ $attr }; # initialized if attr is not called yet.
+        
+        if( ref $obj->{ $attr } eq 'ARRAY' ){
+            foreach my $i ( 0 .. @{ $obj->{ $attr } } - 1 ){
+                if( ref $obj->{ $attr }[$i] ){
+                    carp "\$self->{ '$attr' }[ $i ] must be string. Decode is not done.";
+                }
+                else{
+                    $obj->{ $attr }[$i]
+                        = Encode::decode( $encoding, $obj->{ $attr }[$i] );
+                }
+            }
+        }
+        elsif( ref $obj->{ $attr } eq 'HASH' ){
+            foreach my $key ( keys %{ $obj->{ $attr } } ){
+                if( ref $obj->{ $attr }{ $key } ){
+                    carp "\$self->{ '$attr' }{ '$key' } must be string. Decode is not done.";
+                }
+                else{
+                    $obj->{ $attr }{ $key } 
+                        = Encode::decode( $encoding, $obj->{ $attr }{ $key } );
+                }
+            }
+        }
+        else{
+            if( ref $obj->{ $attr } ){
+                carp "\$self->{ '$attr' } must be string or array ref or hash ref. Decode is not done.";
+            }
+            else{
+                $obj->{ $attr } = Encode::decode( $encoding, $obj->{ $attr } );
+            }
+        }
+    }
+}
+
+sub clone{
+    my ( $self ) = @_;
+    
+    my $obj = $self->obj;
+    croak "'clone' must be called from object." unless is_object( $obj );
+    
+    require Storable;
+    return Storable::dclone( $obj );
+}
+
+sub freeze{
+    my ( $self ) = @_;
+    
+    my $obj = $self->obj;
+    croak "'freeze' must be called from object." unless is_object( $obj );
+    
+    require Storable;
+    return Storable::freeze( $obj );
+}
+
+sub thaw{
+    my ( $self, $freezed ) = @_;
+    
+    require Storable;
+    return Storable::thaw( $freezed );
+}
+
 =head1 NAME
 
 Simo::Wrapper - Object wrapper to manipulate attrs and methods.
@@ -131,7 +248,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.01_01
+Version 0.01_03
 
 =cut
 

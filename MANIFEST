@@ -2,7 +2,7 @@ Build.PL
 Changes
 lib/Simo/Wrapper.pm
 Makefile.PL
-MANIFEST
+MANIFEST			This list of files
 META.yml
 README
 t/00-load.t
@@ -11,6 +11,11 @@ t/02-get_attrs_as_hash.t
 t/03-set_attrs.t
 t/04-run_methods.t
 t/05-new.t
+t/06-encode_attrs.t
+t/07-decode_attrs.t
+t/08-clone.t
+t/09-freeze.t
+t/10-thaw.t
 t/boilerplate.t
 t/pod-coverage.t
 t/pod.t

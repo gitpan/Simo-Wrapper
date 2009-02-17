@@ -1,2 +1,11 @@
-0.01
+0.01_03
+    add clone method
+    add freeze method
+    add thaw method
+
+0.01_02
+    add encode_attrs method
+    add decode_attrs method
+
+0.01_01
     First developer release
