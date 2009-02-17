@@ -1,3 +1,13 @@
+0.01_05
+    refactoring encode_attrs
+    refactoring decode_attrs
+
+0.01_04
+    delete cycle_attrs no_ret option 
+
+0.01_03
+    add cycle_attrs
+
 0.01_03
     add clone method
     add freeze method

@@ -85,37 +85,5 @@ sub f1{
     like( $@, qr/'noexist' is not exist./, 'called from not object' );
 }
 
-sub f2{
-    my ( $val, $info ) = @_;
-    
-    $info->{ no_ret } = 1;
-    return 100;
-}
-
-{
-    my $t = Simo::Wrapper->create( obj => T1->new );
-    $info_list = [];
-    
-    $t->cycle_attrs( \&f2, 'a1' );
-    is( $t->obj->a1, 1, 'string cycle no_ret' );
-}
-
-{
-    my $t = Simo::Wrapper->create( obj => T1->new );
-    $info_list = [];
-    
-    $t->cycle_attrs( \&f2, 'a2' );
-    is_deeply( $t->obj->a2, [ 1, 2 ], 'array string cycle no_ret' );
-}
-
-{
-    my $t = Simo::Wrapper->create( obj => T1->new );
-    $info_list = [];
-
-    $t->cycle_attrs( \&f2, 'a3' );
-    is_deeply( $t->obj->a3, { a => 1, b => 2 }, 'hash string cycle no_ret' );
-}
-
-
 __END__
 
