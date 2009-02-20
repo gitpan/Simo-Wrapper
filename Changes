@@ -1,3 +1,6 @@
+0.01_06
+    Build.PL add required => 'Simo'
+
 0.01_05
     refactoring encode_attrs
     refactoring decode_attrs

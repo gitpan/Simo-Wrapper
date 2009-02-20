@@ -8,6 +8,7 @@ WriteMakefile
           'VERSION_FROM' => 'lib/Simo/Wrapper.pm',
           'PREREQ_PM' => {
                            'Test::More' => 0,
+                           'Simo' => 0,
                            'Simo::Constrain' => 0
                          }
         )
