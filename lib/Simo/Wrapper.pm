@@ -2,7 +2,7 @@ package Simo::Wrapper;
 use Simo;
 use Carp;
 
-our $VERSION = '0.01_06';
+our $VERSION = '0.0201';
 
 use Simo::Constrain qw( is_class_name is_object );
 
@@ -246,7 +246,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.01_06
+Version 0.0201
 
 =cut
 
@@ -257,6 +257,12 @@ This class is designed to be used by L<Simo::Util> o function.
 So this class is not used by itself.
 
 Please read L<Simo::Util> documentation.
+
+=head1 CAUTION
+
+Simo::Wrapper is yet experimental stage.
+
+=cut
 
 =head1 AUTHOR
 
