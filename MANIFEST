@@ -17,6 +17,7 @@ t/08-clone.t
 t/09-freeze.t
 t/10-thaw.t
 t/11-cycle_attrs.t
+t/12-new.t
 t/boilerplate.t
 t/pod-coverage.t
 t/pod.t

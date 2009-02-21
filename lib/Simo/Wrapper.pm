@@ -2,7 +2,7 @@ package Simo::Wrapper;
 use Simo;
 use Carp;
 
-our $VERSION = '0.0201';
+our $VERSION = '0.0202';
 
 use Simo::Constrain qw( is_class_name is_object );
 
@@ -23,7 +23,8 @@ sub new{
     croak "'new' must be called form class or object." 
         if !is_object( $obj ) && !is_class_name( $obj );
     
-    return Simo::Wrapper->create( obj => $self->obj->new );
+    $self->obj( $self->obj->new( @_ ) );
+    return $self;
 }
 
 
@@ -246,7 +247,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.0201
+Version 0.0202
 
 =cut
 
