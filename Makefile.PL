@@ -9,7 +9,8 @@ WriteMakefile
           'PREREQ_PM' => {
                            'Test::More' => 0,
                            'Simo' => 0,
-                           'Simo::Constrain' => 0
+                           'Simo::Constrain' => 0,
+                           'Encode' => 0
                          }
         )
 ;

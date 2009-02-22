@@ -13,6 +13,7 @@ my $builder = Module::Build->new(
     requires => {
         'Simo::Constrain' => 0,
         'Simo' => 0,
+        'Encode' => 0
     },
     add_to_cleanup      => [ 'Simo-Wrapper-*' ],
     create_makefile_pl => 'traditional',

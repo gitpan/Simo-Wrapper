@@ -2,7 +2,7 @@ package Simo::Wrapper;
 use Simo;
 use Carp;
 
-our $VERSION = '0.0202';
+our $VERSION = '0.0203';
 
 use Simo::Constrain qw( is_class_name is_object );
 
@@ -247,7 +247,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.0202
+Version 0.0203
 
 =cut
 
