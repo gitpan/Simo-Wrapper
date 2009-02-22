@@ -10,7 +10,7 @@ t/01-get_attrs.t
 t/02-get_attrs_as_hash.t
 t/03-set_attrs.t
 t/04-run_methods.t
-t/05-new.t
+t/05-create.t
 t/06-encode_attrs.t
 t/07-decode_attrs.t
 t/08-clone.t
@@ -18,6 +18,9 @@ t/09-freeze.t
 t/10-thaw.t
 t/11-filter_attrs.t
 t/12-new.t
+t/13-loaded.t
+t/14-load.t
+t/15-build.t
 t/boilerplate.t
 t/pod-coverage.t
 t/pod.t

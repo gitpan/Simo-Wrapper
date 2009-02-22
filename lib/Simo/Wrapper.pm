@@ -2,7 +2,7 @@ package Simo::Wrapper;
 use Simo;
 use Carp;
 
-our $VERSION = '0.0204';
+our $VERSION = '0.0205';
 
 use Simo::Constrain qw( is_class_name is_object );
 
@@ -15,18 +15,70 @@ sub create{
 }
 
 
-# object builder
+# object builder( return self )
 sub new{
     my $self = shift;
     
     my $obj = $self->obj;
-    croak "'new' must be called form class or object." 
-        if !is_object( $obj ) && !is_class_name( $obj );
     
+    croak "'new' must be called from class or object." 
+        unless is_class_name( $obj ) || is_object( $obj );
+    
+    $self->load if is_class_name( $obj ) && !$self->loaded;
+    
+    croak "'$obj' must be have 'new'." unless $obj->can( 'new' );
+    return $self->obj->new( @_ );
+}
+
+# object builder( return obj )
+sub build{
+    my $self = shift;
+    
+    my $obj = $self->obj;
+    
+    croak "'build' must be called from class or object." 
+        unless is_class_name( $obj ) || is_object( $obj );
+    
+    $self->load if is_class_name( $obj ) && !$self->loaded;
+    
+    croak "'$obj' must be have 'new'." unless $obj->can( 'new' );
     $self->obj( $self->obj->new( @_ ) );
     return $self;
 }
 
+# class loader
+sub load{
+    my $self = shift;
+    my $obj = $self->obj;
+    
+    croak "'load' must be called from class." unless is_class_name( $obj );
+    return $self if $self->loaded;
+    
+    my $pkg = $obj;
+    $pkg =~ s{::}{/}g;
+    $pkg .= '.pm';
+    
+    if( !exists $INC{ $pkg } ){
+        eval "require $obj;" unless exists $INC{ $pkg };
+        if( $@ ){ croak "Cannot load '$obj'" }
+    }
+    return $self;
+}
+
+# check if class is loaded.
+sub loaded{
+    my $self = shift;
+    my $obj = $self->obj;
+    croak"'loaded' must be called from class." unless is_class_name( $obj );
+    
+    return 1 if $obj->can( 'new' );
+    
+    my $pkg = $obj;
+    $pkg =~ s{::}{/}g;
+    $pkg .= '.pm';
+    
+    return exists $INC{ $pkg }
+}
 
 # get value specify attr names
 sub get_attrs{
@@ -88,7 +140,7 @@ sub run_methods{
     my $obj = $self->obj;
     croak "'run_methods' must be called from object." unless is_object( $obj );
     
-    my $method_infos = $self->_SIMO_parse_run_methods_args( $obj, @method_or_args_list );
+    my $method_infos = $self->_parse_run_methods_args( $obj, @method_or_args_list );
     while( my $method_info = shift @{ $method_infos } ){
         my ( $method, $args ) = @{ $method_info }{ qw( name args ) };
         
@@ -102,7 +154,9 @@ sub run_methods{
     }
 }
 
-sub _SIMO_parse_run_methods_args{
+*call = \&run_methods;
+
+sub _parse_run_methods_args{
     my ( $self, $obj, @method_or_args_list ) = @_;
     
     my $method_infos = [];
@@ -247,7 +301,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.0204
+Version 0.0205
 
 =cut
 

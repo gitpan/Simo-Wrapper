@@ -17,38 +17,38 @@ use Simo::Wrapper;
 
 {
     my $t = Simo::Wrapper->create( obj => 'T1' );
-    my $obj = $t->new( x => 1, y => 2 );
-    isa_ok( $obj, 'T1', 'isa ok' );
-    is_deeply( $obj, { x => 1, y => 2 }, 'date ok' );
+    my $w = $t->build( x => 1, y => 2 );
+    isa_ok( $w->obj, 'T1', 'isa ok' );
+    is_deeply( $w->obj, { x => 1, y => 2 }, 'date ok' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    my $obj = $t->new( x => 1, y => 2 );
-    isa_ok( $obj, 'T1', 'isa ok' );
-    is_deeply( $obj, { x => 1, y => 2 }, 'object ok' );
+    my $w = $t->build( x => 1, y => 2 );
+    isa_ok( $w->obj, 'T1', 'isa ok' );
+    is_deeply( $w->obj, { x => 1, y => 2 }, 'object ok' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => 'CGI' );
-    my $q = $t->new;
-    isa_ok( $q, 'CGI' );
+    my $w = $t->build;
+    isa_ok( $w->obj, 'CGI' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => 'CGI' );
-    my $q = $t->new;
-    isa_ok( $q, 'CGI' );
+    my $w = $t->build;
+    isa_ok( $w->obj, 'CGI' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => [] );
-    eval{ $t->new };
-    like( $@, qr/'new' must be called from class or object/, 'called not object or Class' );
+    eval{ $t->build };
+    like( $@, qr/'build' must be called from class or object/, 'called not object or Class' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => 'Carp' );
-    eval{ $t->new };
+    eval{ $t->build };
     like( $@, qr/'Carp' must be have 'new'/, 'called not object or Class' );
 }

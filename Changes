@@ -1,3 +1,6 @@
+0.0205
+    1. add method load, loaded, build
+    2. new return value change Simo::Wrapper object to that object
 0.0203
     change name cycle_attrs -> filter_attrs
 0.0203
