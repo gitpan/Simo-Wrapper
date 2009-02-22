@@ -2,7 +2,7 @@ package Simo::Wrapper;
 use Simo;
 use Carp;
 
-our $VERSION = '0.0203';
+our $VERSION = '0.0204';
 
 use Simo::Constrain qw( is_class_name is_object );
 
@@ -124,11 +124,11 @@ sub _SIMO_parse_run_methods_args{
     return $method_infos;
 }
 
-sub cycle_attrs{
+sub filter_attrs{
     my ( $self, $code, @attrs ) = @_;
     
     my $obj = $self->obj;
-    croak "'cycle_attrs' must be called from object." unless is_object( $obj );
+    croak "'filter_attrs' must be called from object." unless is_object( $obj );
     
     croak "First argument must be code reference." unless ref $code eq 'CODE';
     
@@ -165,7 +165,7 @@ sub encode_attrs{
     croak "'encode_attrs' must be called from object." unless is_object( $obj );
     
     require Encode;
-    $self->cycle_attrs(
+    $self->filter_attrs(
         sub{
             my ( $val, $info ) = @_;
             
@@ -192,7 +192,7 @@ sub decode_attrs{
     croak "'decode_attrs' must be called from object." unless is_object( $obj );
     
     require Encode;
-    $self->cycle_attrs(
+    $self->filter_attrs(
         sub{
             my ( $val, $info ) = @_;
             
@@ -247,7 +247,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.0203
+Version 0.0204
 
 =cut
 

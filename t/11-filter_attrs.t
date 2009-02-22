@@ -24,22 +24,22 @@ sub f1{
     my $t = Simo::Wrapper->create( obj => T1->new );
     $info_list = [];
     
-    $t->cycle_attrs( \&f1, 'a1' );
-    is( $t->obj->a1, 2, 'string cycle' );
-    is_deeply( $info_list, [ { type => 'SCALAR', attr => 'a1', self => $t->obj } ], 'string cycle info' );
+    $t->filter_attrs( \&f1, 'a1' );
+    is( $t->obj->a1, 2, 'string filter' );
+    is_deeply( $info_list, [ { type => 'SCALAR', attr => 'a1', self => $t->obj } ], 'string filter info' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
     $info_list = [];
     
-    $t->cycle_attrs( \&f1, 'a2' );
-    is_deeply( $t->obj->a2, [ 2, 4 ], 'array string cycle' );
+    $t->filter_attrs( \&f1, 'a2' );
+    is_deeply( $t->obj->a2, [ 2, 4 ], 'array string filter' );
     is_deeply( 
         $info_list, 
         [ { type => 'ARRAY', attr => 'a2', index => 0, self => $t->obj },
           { type => 'ARRAY', attr => 'a2', index => 1, self => $t->obj } ],
-        'array string cycle info' 
+        'array string filter info' 
     );
 }
 
@@ -47,41 +47,41 @@ sub f1{
     my $t = Simo::Wrapper->create( obj => T1->new );
     $info_list = [];
 
-    $t->cycle_attrs( \&f1, 'a3' );
-    is_deeply( $t->obj->a3, { a => 2, b => 4 }, 'hash string cycle' );
+    $t->filter_attrs( \&f1, 'a3' );
+    is_deeply( $t->obj->a3, { a => 2, b => 4 }, 'hash string filter' );
     
     $info_list = [ sort { $a->{ key } cmp $b->{ key } } @{ $info_list } ];
     is_deeply( 
         $info_list, 
         [ { type => 'HASH', attr => 'a3', key => 'a', self => $t->obj },
           { type => 'HASH', attr => 'a3', key => 'b', self => $t->obj } ],
-        'hash string cycle info' 
+        'hash string filter info' 
     );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    $t->cycle_attrs( \&f1, qw( a1 a2 a3 ) );
-    is( $t->obj->a1, 2, 'mutil attrs cycle 1' );
-    is_deeply( $t->obj->a2, [ 2, 4 ], 'mutil attrs cycle 2' );
-    is_deeply( $t->obj->a3, { a => 2, b => 4 }, 'mutil attrs cycle 3' );
+    $t->filter_attrs( \&f1, qw( a1 a2 a3 ) );
+    is( $t->obj->a1, 2, 'mutil attrs filter 1' );
+    is_deeply( $t->obj->a2, [ 2, 4 ], 'mutil attrs filter 2' );
+    is_deeply( $t->obj->a3, { a => 2, b => 4 }, 'mutil attrs filter 3' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => 'Book' );
-    eval{ $t->cycle_attrs( \&f1, 'a1' ) };
-    like( $@, qr/'cycle_attrs' must be called from object/, 'called from not object' );
+    eval{ $t->filter_attrs( \&f1, 'a1' ) };
+    like( $@, qr/'filter_attrs' must be called from object/, 'called from not object' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    eval{ $t->cycle_attrs( {}, 'a1' ) };
+    eval{ $t->filter_attrs( {}, 'a1' ) };
     like( $@, qr/First argument must be code reference/, 'not pass code ref' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    eval{ $t->cycle_attrs( \&f1, 'noexist' ) };
+    eval{ $t->filter_attrs( \&f1, 'noexist' ) };
     like( $@, qr/'noexist' is not exist./, 'called from not object' );
 }
 
