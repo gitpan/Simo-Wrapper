@@ -21,6 +21,7 @@ t/12-new.t
 t/13-loaded.t
 t/14-load.t
 t/15-build.t
+t/16-validate.t
 t/boilerplate.t
 t/pod-coverage.t
 t/pod.t

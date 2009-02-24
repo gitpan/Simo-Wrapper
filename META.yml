@@ -1,6 +1,6 @@
 ---
 name: Simo-Wrapper
-version: 0.0205
+version: 0.0206
 author:
   - 'Yuki Kimoto <kimoto.yuki@gmail.com>'
 abstract: Object wrapper to manipulate attrs and methods.
@@ -16,7 +16,7 @@ build_requires:
 provides:
   Simo::Wrapper:
     file: lib/Simo/Wrapper.pm
-    version: 0.0205
+    version: 0.0206
 generated_by: Module::Build version 0.31012
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

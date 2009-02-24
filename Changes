@@ -1,3 +1,5 @@
+0.0206
+    add method 'validate'
 0.0205
     1. add method load, loaded, build
     2. new return value change Simo::Wrapper object to that object

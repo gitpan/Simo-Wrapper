@@ -1,9 +1,10 @@
 package Simo::Wrapper;
 use Simo;
+
+our $VERSION = '0.0206';
+
 use Carp;
-
-our $VERSION = '0.0205';
-
+use Simo::Error;
 use Simo::Constrain qw( is_class_name is_object );
 
 # accessor ( by Simo )
@@ -14,8 +15,7 @@ sub create{
     my $self = shift->SUPER::new( @_ );
 }
 
-
-# object builder( return self )
+# object builder( return obj )
 sub new{
     my $self = shift;
     
@@ -30,7 +30,7 @@ sub new{
     return $self->obj->new( @_ );
 }
 
-# object builder( return obj )
+# object builder( return self )
 sub build{
     my $self = shift;
     
@@ -78,6 +78,37 @@ sub loaded{
     $pkg .= '.pm';
     
     return exists $INC{ $pkg }
+}
+
+sub validate{
+    my ( $self, @args ) = @_;
+    my $obj = $self->obj;
+    my $pkg = ref $obj;
+    croak "Cannot call 'validate' from class" unless $pkg;
+    
+    # check args
+    @args = %{ $args[0] } if ref $args[0] eq 'HASH';
+    croak "key-value pairs must be passed to 'validate'" if @args % 2;
+    
+    # set args
+    while( my ( $attr, $validator ) = splice( @args, 0, 2 ) ){
+        croak "Attr '$attr' is not exist" unless $obj->can( $attr );
+        croak "Value must be code reference" unless ref $validator eq 'CODE';
+        
+        local $_ = $obj->$attr;
+        my $info = {};
+        my $ret = $validator->( $_, $info );
+        if( !$ret ){
+            Simo::Error->throw( 
+                type => 'value_invalid',
+                msg => "${pkg}::$attr must be valid value",
+                pkg => $pkg,
+                attr => $attr,
+                val => $_,
+                info => $info
+            );
+        }
+    }
 }
 
 # get value specify attr names
@@ -301,7 +332,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.0205
+Version 0.0206
 
 =cut
 
@@ -316,6 +347,8 @@ Please read L<Simo::Util> documentation.
 =head1 CAUTION
 
 Simo::Wrapper is yet experimental stage.
+
+Please wait until Simo::Wrapper will be stable.
 
 =cut
 
