@@ -8,9 +8,9 @@ WriteMakefile
           'VERSION_FROM' => 'lib/Simo/Wrapper.pm',
           'PREREQ_PM' => {
                            'Test::More' => 0,
-                           'Simo' => 0,
-                           'Simo::Constrain' => 0,
-                           'Encode' => 0
+                           'Simo' => '0.0805',
+                           'Simo::Constrain' => '0.0201',
+                           'Encode' => '2.12'
                          }
         )
 ;

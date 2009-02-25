@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0206';
+our $VERSION = '0.0207';
 
 use Carp;
 use Simo::Error;
@@ -109,6 +109,22 @@ sub validate{
             );
         }
     }
+    return $self;
+}
+
+# new object and validate
+sub new_and_validate{
+    my ( $self, @args ) = @_;
+    croak "key-value-validator pairs must be passed to 'new_and_validate'."
+        if @args % 3;
+    
+    my @key_value_pairs;
+    my @key_validator_pairs;
+    while( my ( $key, $val, $validator ) = splice( @args, 0, 3 ) ){
+        push @key_value_pairs, $key, $val;
+        push @key_validator_pairs, $key, $validator;
+    }
+    return $self->build( @key_value_pairs )->validate( @key_validator_pairs )->obj;
 }
 
 # get value specify attr names
@@ -332,7 +348,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.0206
+Version 0.0207
 
 =cut
 

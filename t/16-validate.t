@@ -16,8 +16,9 @@ use Simo::Wrapper;
     my $t = Simo::Wrapper->create( obj => T1->new );
     
     $@ = undef;
-    $t->validate( m1 => sub{ 1 }, m2 => sub{ 1 } );
+    my $ret = $t->validate( m1 => sub{ 1 }, m2 => sub{ 1 } );
     ok( !$@, 'value is valid' );
+    cmp_ok( $ret, '==', $t, 'return self' );
 }
 
 {
