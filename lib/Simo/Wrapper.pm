@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0207';
+our $VERSION = '0.0208';
 
 use Carp;
 use Simo::Error;
@@ -348,7 +348,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.0207
+Version 0.0208
 
 =cut
 

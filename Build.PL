@@ -11,9 +11,11 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
     },
     requires => {
-        'Simo::Constrain' => 0.0201,
         'Simo' => 0.0805,
+        'Simo::Constrain' => 0.0201,
+        'Simo::Error' => 0.0206,
         'Encode' => 2.12
+        
     },
     add_to_cleanup      => [ 'Simo-Wrapper-*' ],
     create_makefile_pl => 'traditional',
