@@ -45,6 +45,21 @@ use Simo::Wrapper;
     like( $@, qr/key-value-validator pairs must be passed to 'new_and_validate'./, 'args count is 2' );
 }
 
+{
+    my $w = Simo::Wrapper->create( obj => 'T1' );
+    my $hash = { m1 => 1, m2 => 2 };
+    my $validator = { m1 => sub{ 1 } };
+    my $t1 = $w->new_and_validate( $hash, $validator );
+    
+    isa_ok( $t1, 'T1' );
+    is_deeply( $t1, { m1 => 1, m2 => 2 }, 'hash and validator' );
+}
 
-
+{
+    my $w = Simo::Wrapper->create( obj => 'T1' );
+    my $hash = { m1 => 1, m2 => 2 };
+    my $validator = { m1 => sub{ 0 } };
+    eval{ $w->new_and_validate( $hash, $validator ) };
+    ok( $@, 'hash and validator invalid' );
+}
 

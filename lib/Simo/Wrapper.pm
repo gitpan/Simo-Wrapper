@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0208';
+our $VERSION = '0.0209';
 
 use Carp;
 use Simo::Error;
@@ -115,16 +115,26 @@ sub validate{
 # new object and validate
 sub new_and_validate{
     my ( $self, @args ) = @_;
-    croak "key-value-validator pairs must be passed to 'new_and_validate'."
-        if @args % 3;
     
-    my @key_value_pairs;
-    my @key_validator_pairs;
-    while( my ( $key, $val, $validator ) = splice( @args, 0, 3 ) ){
-        push @key_value_pairs, $key, $val;
-        push @key_validator_pairs, $key, $validator;
+    if( ref $args[0] eq 'HASH' && ref $args[0] eq 'HASH' ){
+        my $always_valid = sub{ 1 };
+        foreach my $attr ( keys %{ $args[0] } ){
+            $args[1]->{ $attr } = $always_valid unless exists $args[1]->{ $attr }
+        }
+        return $self->build( $args[0] )->validate( $args[1] )->obj;
     }
-    return $self->build( @key_value_pairs )->validate( @key_validator_pairs )->obj;
+    else{
+        croak "key-value-validator pairs must be passed to 'new_and_validate'."
+            if @args % 3;
+        
+        my @key_value_pairs;
+        my @key_validator_pairs;
+        while( my ( $key, $val, $validator ) = splice( @args, 0, 3 ) ){
+            push @key_value_pairs, $key, $val;
+            push @key_validator_pairs, $key, $validator;
+        }
+        return $self->build( @key_value_pairs )->validate( @key_validator_pairs )->obj;
+    }
 }
 
 # get value specify attr names
@@ -152,7 +162,7 @@ sub get_attrs_as_hash{
     my $obj = $self->obj;
     croak "'get_attrs_as_hash' must be called from object." unless is_object( $obj );
     
-    my @vals = $obj->get_attrs( @attrs );
+    my @vals = $self->get_attrs( @attrs );
     
     my %attrs;
     @attrs{ @attrs } = @vals;
@@ -348,7 +358,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.0208
+Version 0.0209
 
 =cut
 
