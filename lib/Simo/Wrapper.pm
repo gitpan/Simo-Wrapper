@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0210';
+our $VERSION = '0.0211';
 
 use Carp;
 use Simo::Error;
@@ -238,16 +238,21 @@ sub set_attrs_from_objective_hash{
     my ( $self, @args ) = @_;
     
     my $obj = $self->obj;
-    croak "'set_attrs' must be called from object." unless is_object( $obj );
+    croak "'set_attrs_from_objective_hash' must be called from object." unless is_object( $obj );
     
     # check args
     @args = %{ $args[0] } if ref $args[0] eq 'HASH';
-    croak 'key-value pairs must be passed to set_attrs' if @args % 2;
+    croak "key-value pairs must be passed to 'set_attrs_from_objective_hash'" if @args % 2;
     
     # set args
     my %args = @args;
     while( my ( $attr, $val ) = each %args ){
-        croak "Invalid key '$attr' is passed to set_attrs" unless $obj->can( $attr );
+        if( $attr eq '__CLASS' || $attr eq '__CLASS_CONSTRUCTOR' ){
+            delete $args{ $attr };
+            next;
+        }
+        
+        croak "Invalid key '$attr' is passed to 'set_attrs_from_objective_hash'" unless $obj->can( $attr );
         if( ref $args{ $attr } eq 'HASH' && $args{ $attr }->{ __CLASS } ){
             $val = Simo::Wrapper->create->new_from_objective_hash( $args{ $attr } );
         }
@@ -435,7 +440,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.0210
+Version 0.0211
 
 =cut
 
