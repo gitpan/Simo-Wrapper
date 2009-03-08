@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0209';
+our $VERSION = '0.0210';
 
 use Carp;
 use Simo::Error;
@@ -137,6 +137,48 @@ sub new_and_validate{
     }
 }
 
+sub new_from_objective_hash{
+    my ( $self, @args ) = @_;
+    
+    my $obj = $self->obj;
+    
+    # check args
+    @args = %{ $args[0] } if ref $args[0] eq 'HASH';
+    croak "key-value pairs must be passed to 'new_from_objective_hash'." if @args % 2;
+    my %args = @args;
+    
+    my $class = ref $obj || $obj;
+    $class ||= $args{ __CLASS };
+    delete $args{ __CLASS };
+    
+    my $constructor = delete $args{ __CLASS_CONSTRUCTOR } || 'new';
+    
+    while( my ( $attr, $val ) = each %args ){
+        if( ref $args{ $attr } eq 'HASH' && $args{ $attr }->{ __CLASS } ){
+            $val = Simo::Wrapper->create->new_from_objective_hash( $args{ $attr } );
+        }
+        $args{ $attr } = $val;
+    }
+
+    eval "require $class";
+    {
+        croak "'$class' do not have '$constructor' method." unless $class->can( $constructor );
+        no strict 'refs';
+        $obj = $class->$constructor( %args );
+    }
+    return $obj;
+}
+
+sub new_from_xml{
+    my ( $self, $xml ) = @_;
+    require XML::Simple;
+    
+    my $objective_hash = XML::Simple->new->XMLin( $xml );
+    
+    $self->obj( undef );
+    return $self->new_from_objective_hash( $objective_hash );
+}
+
 # get value specify attr names
 sub get_attrs{
     my ( $self, @attrs ) = @_;
@@ -187,6 +229,41 @@ sub set_attrs{
         no strict 'refs';
         $obj->$attr( $val );
     }
+    return $self;
+}
+
+
+# set values
+sub set_attrs_from_objective_hash{
+    my ( $self, @args ) = @_;
+    
+    my $obj = $self->obj;
+    croak "'set_attrs' must be called from object." unless is_object( $obj );
+    
+    # check args
+    @args = %{ $args[0] } if ref $args[0] eq 'HASH';
+    croak 'key-value pairs must be passed to set_attrs' if @args % 2;
+    
+    # set args
+    my %args = @args;
+    while( my ( $attr, $val ) = each %args ){
+        croak "Invalid key '$attr' is passed to set_attrs" unless $obj->can( $attr );
+        if( ref $args{ $attr } eq 'HASH' && $args{ $attr }->{ __CLASS } ){
+            $val = Simo::Wrapper->create->new_from_objective_hash( $args{ $attr } );
+        }
+        no strict 'refs';
+        $obj->$attr( $val );
+    }
+    return $self;
+}
+
+sub set_attrs_from_xml{
+    my ( $self, $xml ) = @_;
+    require XML::Simple;
+    
+    my $objective_hash = XML::Simple->new->XMLin( $xml );
+    
+    $self->set_attrs_from_objective_hash( $objective_hash );
     return $self;
 }
 
@@ -358,7 +435,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.0209
+Version 0.0210
 
 =cut
 

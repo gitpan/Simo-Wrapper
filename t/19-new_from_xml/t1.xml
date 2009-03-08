@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<conf __CLASS="T1">
+        <m1>1</m1>
+        <m2>
+          <a>2</a>
+          <b>3</b>
+        </m2>
+        <m3>4</m3>
+        <m4 __CLASS="T2" __CLASS_CONSTRUCTOR="create" >
+            <m1>1</m1>
+            <m2>2</m2>
+        </m4>
+        <m5>5</m5>
+</conf>

@@ -9,6 +9,7 @@ WriteMakefile
           'PREREQ_PM' => {
                            'Test::More' => 0,
                            'Simo' => '0.0805',
+                           'XML::Simple' => '2.18',
                            'Simo::Error' => '0.0206',
                            'Simo::Constrain' => '0.0201',
                            'Encode' => '2.12'

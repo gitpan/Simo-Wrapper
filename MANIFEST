@@ -23,6 +23,12 @@ t/14-load.t
 t/15-build.t
 t/16-validate.t
 t/17-new_and_validate.t
+t/18-new_from_objective_hash.t
+t/19-new_from_xml.t
+t/19-new_from_xml/t1.xml
+t/20-set_attrs_from_objective_hash.t
+t/21-set_attrs_from_xml.t
+t/21-set_attrs_from_xml/t1.xml
 t/boilerplate.t
 t/pod-coverage.t
 t/pod.t

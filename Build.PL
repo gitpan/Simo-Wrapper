@@ -14,8 +14,8 @@ my $builder = Module::Build->new(
         'Simo' => 0.0805,
         'Simo::Constrain' => 0.0201,
         'Simo::Error' => 0.0206,
-        'Encode' => 2.12
-        
+        'Encode' => 2.12,
+        'XML::Simple' => '2.18'
     },
     add_to_cleanup      => [ 'Simo-Wrapper-*' ],
     create_makefile_pl => 'traditional',

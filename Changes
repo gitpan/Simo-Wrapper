@@ -1,3 +1,8 @@
+0.0210
+    add method 'new_from_objective_hash'
+    add method 'new_from_xml'
+    add method 'set_attrs_from_objective_hash'
+    add method 'set_attrs_from_xml'
 0.0209
     new_and_validate is able to recive hash ref and validator.
 0.0208
