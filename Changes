@@ -1,3 +1,6 @@
+0.0212
+    referctoring 'new' and 'build' method.
+    remove 'load' and 'loaded' becuase these methods is no more needed.
 0.0211
     bag fix 'set_attrs_from_objective_hash'.
 0.0210

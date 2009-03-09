@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0211';
+our $VERSION = '0.0212';
 
 use Carp;
 use Simo::Error;
@@ -21,10 +21,14 @@ sub new{
     
     my $obj = $self->obj;
     
-    croak "'new' must be called from class or object." 
-        unless is_class_name( $obj ) || is_object( $obj );
-    
-    $self->load if is_class_name( $obj ) && !$self->loaded;
+    if( is_class_name( $obj ) ){
+        eval "require $obj";
+    }
+    else{
+        unless( is_object( $obj ) ){
+            croak "'new' must be called from class or object.";
+        }
+    }
     
     croak "'$obj' must be have 'new'." unless $obj->can( 'new' );
     return $self->obj->new( @_ );
@@ -36,48 +40,18 @@ sub build{
     
     my $obj = $self->obj;
     
-    croak "'build' must be called from class or object." 
-        unless is_class_name( $obj ) || is_object( $obj );
-    
-    $self->load if is_class_name( $obj ) && !$self->loaded;
+    if( is_class_name( $obj ) ){
+        eval "require $obj";
+    }
+    else{
+        unless( is_object( $obj ) ){
+            croak "'build' must be called from class or object.";
+        }
+    }
     
     croak "'$obj' must be have 'new'." unless $obj->can( 'new' );
     $self->obj( $self->obj->new( @_ ) );
     return $self;
-}
-
-# class loader
-sub load{
-    my $self = shift;
-    my $obj = $self->obj;
-    
-    croak "'load' must be called from class." unless is_class_name( $obj );
-    return $self if $self->loaded;
-    
-    my $pkg = $obj;
-    $pkg =~ s{::}{/}g;
-    $pkg .= '.pm';
-    
-    if( !exists $INC{ $pkg } ){
-        eval "require $obj;" unless exists $INC{ $pkg };
-        if( $@ ){ croak "Cannot load '$obj'" }
-    }
-    return $self;
-}
-
-# check if class is loaded.
-sub loaded{
-    my $self = shift;
-    my $obj = $self->obj;
-    croak"'loaded' must be called from class." unless is_class_name( $obj );
-    
-    return 1 if $obj->can( 'new' );
-    
-    my $pkg = $obj;
-    $pkg =~ s{::}{/}g;
-    $pkg .= '.pm';
-    
-    return exists $INC{ $pkg }
 }
 
 sub validate{
@@ -440,7 +414,7 @@ Simo::Wrapper - Object wrapper to manipulate attrs and methods.
 
 =head1 VERSION
 
-Version 0.0211
+Version 0.0212
 
 =cut
 

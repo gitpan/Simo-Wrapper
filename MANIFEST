@@ -18,8 +18,6 @@ t/09-freeze.t
 t/10-thaw.t
 t/11-filter_attrs.t
 t/12-new.t
-t/13-loaded.t
-t/14-load.t
 t/15-build.t
 t/16-validate.t
 t/17-new_and_validate.t
