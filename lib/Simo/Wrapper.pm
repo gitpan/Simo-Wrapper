@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0213';
+our $VERSION = '0.0214';
 
 use Carp;
 use Simo::Error;
@@ -15,7 +15,6 @@ sub create{
     my $self = shift->SUPER::new( @_ );
 }
 
-# object builder( return obj )
 sub new{
     my $self = shift;
     
@@ -32,6 +31,24 @@ sub new{
     
     croak "'$obj' must be have 'new'." unless $obj->can( 'new' );
     return $self->obj->new( @_ );
+}
+
+sub connect{
+    my $self = shift;
+    
+    my $obj = $self->obj;
+    
+    if( is_class_name( $obj ) ){
+        eval "require $obj";
+    }
+    else{
+        unless( is_object( $obj ) ){
+            croak "'connect' must be called from class or object.";
+        }
+    }
+    
+    croak "'$obj' must be have 'connect'." unless $obj->can( 'connect' );
+    return $self->obj->connect( @_ );
 }
 
 # object builder( return self )
@@ -424,23 +441,142 @@ Simo::Wrapper - Wrapper class to manipulate object.
 
 =head1 VERSION
 
-Version 0.0213
-
-=cut
-
-=head1 DESCRIPTION
-
-This class is designed to be used by L<Simo::Util> o function.
-
-So this class is not used by itself.
-
-Please read L<Simo::Util> documentation.
+Version 0.0214
 
 =head1 CAUTION
 
 Simo::Wrapper is yet experimental stage.
 
 Please wait until Simo::Wrapper will be stable.
+
+=cut
+
+=head1 SYNOPSIS
+
+    use Simo::Util 'o';
+    # new
+    my $book = o('Book')->new( title => 'Good day', price => 1000 );
+
+    # connect
+    my $dbh = o('DBI')->connect( 'dbi:SQLite:db_name=test_db', '', '' );
+    
+    # new_and_validate
+    my $book = o('Book')->new_and_validate(
+        title => 'a', sub{ length $_ < 30 },
+        price => 1000, sub{ $_ > 0 && $_ < 50000 },
+    );
+    
+    my $book = o('Book')->new_and_validate(
+        { title => 'a', price => 'b' },
+        { title=> sub{ length $_ < 30 }, price => sub{ $_ > 0 && $_ < 50000 } }
+    );
+    
+    # set_values
+    o($book)->set_values( title => 'Good news', author => 'kimoto' );
+    
+    # get_values
+    my ( $title, $author ) = o($book)->get_values( qw/ title author / );
+    
+    # get_hashs
+    my $hash = o($book)->get_hash( qw/ title author / );
+    
+    # run_method
+    o($book_list)->run_methods(
+        find => [ 'author' => 'kimoto' ],
+        sort => [ 'price', 'desc' ],
+        'get_result'
+    );
+    
+    # filter_values
+    o($book)->filter_values(
+        sub{ uc $_ },
+        qw/ title author /,
+    );
+    
+    # encode_values and decode_values
+    o($book)->encode_values( 'utf8', qw/ title author / );
+    o($book)->decode_values( 'utf8', qw/ title author / );
+    
+    # clone
+    my $book_copy = o($book)->clone;
+    
+    # freeze and thaw
+    my $book_freezed = o($book)->freeze;
+    my $book = o->thaw( $book_freezed );
+    
+    # new_from_xml and set_values_from_xml
+    my $book = o->new_from_xml( $xml_file );
+    o($book)->set_values_from_xml( $xml_file );
+    
+=head1 FEATURES
+
+Simo::Wrapper is the collection of methods to manipulate a object.
+
+To use a class not calling 'require', use 'new'. 
+'new' automatically load the class, and call 'new' method.
+
+To create a object and validate values, use 'new_and_validate'.
+
+To set or get multiple values, use 'set_values', 'get_value', 'get_hash'.
+
+To call multiple methods, use 'run_methods'.
+
+To convert values to other value, use 'filter_values'.
+
+To encode or decode values, use 'encode_values' or 'decode_values'.
+
+To clone or freeze or thaw the object, use 'clone', 'freeze' or 'thaw'.
+
+To create a object form xml file, use 'new_from_xml'.
+
+To set values using xml file, use 'set_values_from_xml'.
+
+Simo::Wrapper is designed to be used from L<Simo::Util> o function.
+See also L<Simo::Util>
+
+=head1 FUNCTION
+
+Simo::Wrapper object is usually used from L<Simo::Util> o function,
+so sample is explain using this function.
+
+=head2 new
+
+'new' is a object constructor. 
+Unlike normal 'new', this 'new' load class automatically and construct object.
+
+    my $book = o('Book')->new( title => 'Good day', price => 1000 );
+
+You no longer call 'require' or 'use'.
+
+=head2 connect
+
+'connect' is the same as 'new'.
+
+I prepare 'connect' method because classes like 'DBI' has 'connect' method as the object constructor.
+
+    my $dbh = o('DBI')->connect( 'dbi:SQLite:db_name=test_db', '', '' );
+
+
+=head2 obj
+=head2 create
+=head2 build
+=head2 validate
+=head2 new_and_validate
+=head2 new_from_objective_hash
+=head2 new_from_xml
+=head2 get_values
+=head2 get_hash
+=head2 set_values
+=head2 set_values_from_objective_hash
+=head2 set_values_from_xml
+=head2 run_methods
+=head2 _parse_run_methods_args
+=head2 filter_values
+=head2 encode_values
+=head2 decode_values
+=head2 clone
+=head2 freeze
+=head2 thaw
 
 =cut
 

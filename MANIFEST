@@ -36,6 +36,7 @@ t/27-filter_values.t
 t/28-set_values_from_objective_hash.t
 t/29-set_values_from_xml.t
 t/29-set_values_from_xml/t1.xml
+t/30-connect.t
 t/boilerplate.t
 t/pod-coverage.t
 t/pod.t
