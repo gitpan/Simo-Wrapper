@@ -47,7 +47,7 @@ use Simo::Wrapper;
 {
     my $t = Simo::Wrapper->create( obj => 'Book' );
     eval{ $t->encode_attrs( 'utf8', 'a1' ) };
-    like( $@, qr/'encode_attrs' must be called from object/, 'called from not object' );
+    like( $@, qr/'encode_values' must be called from object/, 'called from not object' );
 }
 
 {

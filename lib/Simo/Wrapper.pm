@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0212';
+our $VERSION = '0.0213';
 
 use Carp;
 use Simo::Error;
@@ -154,17 +154,17 @@ sub new_from_xml{
 }
 
 # get value specify attr names
-sub get_attrs{
+sub get_values{
     my ( $self, @attrs ) = @_;
     
     my $obj = $self->obj;
-    croak "'get_attrs' must be called from object." unless is_object( $obj );
+    croak "'get_values' must be called from object." unless is_object( $obj );
     
     @attrs = @{ $attrs[0] } if ref $attrs[0] eq 'ARRAY';
     
     my @vals;
     foreach my $attr ( @attrs ){
-        croak "Invalid key '$attr' is passed to get_attrs" unless $obj->can( $attr );
+        croak "Invalid key '$attr' is passed to get_values" unless $obj->can( $attr );
         my $val = $obj->$attr;
         push @vals, $val;
     }
@@ -172,34 +172,34 @@ sub get_attrs{
 }
 
 # get value as hash specify attr names
-sub get_attrs_as_hash{
+sub get_hash{
     my ( $self, @attrs ) = @_;
     
     my $obj = $self->obj;
-    croak "'get_attrs_as_hash' must be called from object." unless is_object( $obj );
+    croak "'get_hash' must be called from object." unless is_object( $obj );
     
-    my @vals = $self->get_attrs( @attrs );
+    my @vals = $self->get_values( @attrs );
     
-    my %attrs;
-    @attrs{ @attrs } = @vals;
+    my %values;
+    @values{ @attrs } = @vals;
     
-    wantarray ? %attrs : \%attrs;
+    wantarray ? %values : \%values;
 }
 
 # set values
-sub set_attrs{
+sub set_values{
     my ( $self, @args ) = @_;
     
     my $obj = $self->obj;
-    croak "'set_attrs' must be called from object." unless is_object( $obj );
+    croak "'set_values' must be called from object." unless is_object( $obj );
     
     # check args
     @args = %{ $args[0] } if ref $args[0] eq 'HASH';
-    croak 'key-value pairs must be passed to set_attrs' if @args % 2;
+    croak "key-value pairs must be passed to 'set_values'." if @args % 2;
     
     # set args
     while( my ( $attr, $val ) = splice( @args, 0, 2 ) ){
-        croak "Invalid key '$attr' is passed to set_attrs" unless $obj->can( $attr );
+        croak "Invalid key '$attr' is passed to 'set_values'" unless $obj->can( $attr );
         no strict 'refs';
         $obj->$attr( $val );
     }
@@ -208,15 +208,15 @@ sub set_attrs{
 
 
 # set values
-sub set_attrs_from_objective_hash{
+sub set_values_from_objective_hash{
     my ( $self, @args ) = @_;
     
     my $obj = $self->obj;
-    croak "'set_attrs_from_objective_hash' must be called from object." unless is_object( $obj );
+    croak "'set_values_from_objective_hash' must be called from object." unless is_object( $obj );
     
     # check args
     @args = %{ $args[0] } if ref $args[0] eq 'HASH';
-    croak "key-value pairs must be passed to 'set_attrs_from_objective_hash'" if @args % 2;
+    croak "key-value pairs must be passed to 'set_values_from_objective_hash'" if @args % 2;
     
     # set args
     my %args = @args;
@@ -226,7 +226,7 @@ sub set_attrs_from_objective_hash{
             next;
         }
         
-        croak "Invalid key '$attr' is passed to 'set_attrs_from_objective_hash'" unless $obj->can( $attr );
+        croak "Invalid key '$attr' is passed to 'set_values_from_objective_hash'" unless $obj->can( $attr );
         if( ref $args{ $attr } eq 'HASH' && $args{ $attr }->{ __CLASS } ){
             $val = Simo::Wrapper->create->new_from_objective_hash( $args{ $attr } );
         }
@@ -236,13 +236,13 @@ sub set_attrs_from_objective_hash{
     return $self;
 }
 
-sub set_attrs_from_xml{
+sub set_values_from_xml{
     my ( $self, $xml ) = @_;
     require XML::Simple;
     
     my $objective_hash = XML::Simple->new->XMLin( $xml );
     
-    $self->set_attrs_from_objective_hash( $objective_hash );
+    $self->set_values_from_objective_hash( $objective_hash );
     return $self;
 }
 
@@ -291,11 +291,11 @@ sub _parse_run_methods_args{
     return $method_infos;
 }
 
-sub filter_attrs{
+sub filter_values{
     my ( $self, $code, @attrs ) = @_;
     
     my $obj = $self->obj;
-    croak "'filter_attrs' must be called from object." unless is_object( $obj );
+    croak "'filter_values' must be called from object." unless is_object( $obj );
     
     croak "First argument must be code reference." unless ref $code eq 'CODE';
     
@@ -325,14 +325,14 @@ sub filter_attrs{
     }
 }
 
-sub encode_attrs{
+sub encode_values{
     my ( $self, $encoding, @attrs ) = @_;
     
     my $obj = $self->obj;
-    croak "'encode_attrs' must be called from object." unless is_object( $obj );
+    croak "'encode_values' must be called from object." unless is_object( $obj );
     
     require Encode;
-    $self->filter_attrs(
+    $self->filter_values(
         sub{
             my ( $val, $info ) = @_;
             
@@ -352,14 +352,14 @@ sub encode_attrs{
     );
 }
 
-sub decode_attrs{
+sub decode_values{
     my ( $self, $encoding, @attrs ) = @_;
     
     my $obj = $self->obj;
-    croak "'decode_attrs' must be called from object." unless is_object( $obj );
+    croak "'decode_values' must be called from object." unless is_object( $obj );
     
     require Encode;
-    $self->filter_attrs(
+    $self->filter_values(
         sub{
             my ( $val, $info ) = @_;
             
@@ -406,15 +406,25 @@ sub thaw{
     return Storable::thaw( $freezed );
 }
 
+# The following method is renamed. Don't use these method .
+*get_attrs = \&get_values;
+*get_attrs_as_hash = \&get_hash;
+*set_attrs = \&set_values;
+*encode_attrs = \&encode_values;
+*decode_attrs = \&decode_values;
+*filter_attrs = \&filter_values;
+*set_attrs_from_objective_hash = \&set_values_from_objective_hash;
+*set_attrs_from_xml = \&set_values_from_xml;
+
 =head1 NAME
 
-Simo::Wrapper - Object wrapper to manipulate attrs and methods.
+Simo::Wrapper - Wrapper class to manipulate object.
 
 =cut
 
 =head1 VERSION
 
-Version 0.0212
+Version 0.0213
 
 =cut
 

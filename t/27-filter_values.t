@@ -24,7 +24,7 @@ sub f1{
     my $t = Simo::Wrapper->create( obj => T1->new );
     $info_list = [];
     
-    $t->filter_attrs( \&f1, 'a1' );
+    $t->filter_values( \&f1, 'a1' );
     is( $t->obj->a1, 2, 'string filter' );
     is_deeply( $info_list, [ { type => 'SCALAR', attr => 'a1', self => $t->obj } ], 'string filter info' );
 }
@@ -33,7 +33,7 @@ sub f1{
     my $t = Simo::Wrapper->create( obj => T1->new );
     $info_list = [];
     
-    $t->filter_attrs( \&f1, 'a2' );
+    $t->filter_values( \&f1, 'a2' );
     is_deeply( $t->obj->a2, [ 2, 4 ], 'array string filter' );
     is_deeply( 
         $info_list, 
@@ -47,7 +47,7 @@ sub f1{
     my $t = Simo::Wrapper->create( obj => T1->new );
     $info_list = [];
 
-    $t->filter_attrs( \&f1, 'a3' );
+    $t->filter_values( \&f1, 'a3' );
     is_deeply( $t->obj->a3, { a => 2, b => 4 }, 'hash string filter' );
     
     $info_list = [ sort { $a->{ key } cmp $b->{ key } } @{ $info_list } ];
@@ -61,7 +61,7 @@ sub f1{
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    $t->filter_attrs( \&f1, qw( a1 a2 a3 ) );
+    $t->filter_values( \&f1, qw( a1 a2 a3 ) );
     is( $t->obj->a1, 2, 'mutil attrs filter 1' );
     is_deeply( $t->obj->a2, [ 2, 4 ], 'mutil attrs filter 2' );
     is_deeply( $t->obj->a3, { a => 2, b => 4 }, 'mutil attrs filter 3' );
@@ -69,19 +69,19 @@ sub f1{
 
 {
     my $t = Simo::Wrapper->create( obj => 'Book' );
-    eval{ $t->filter_attrs( \&f1, 'a1' ) };
+    eval{ $t->filter_values( \&f1, 'a1' ) };
     like( $@, qr/'filter_values' must be called from object/, 'called from not object' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    eval{ $t->filter_attrs( {}, 'a1' ) };
+    eval{ $t->filter_values( {}, 'a1' ) };
     like( $@, qr/First argument must be code reference/, 'not pass code ref' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    eval{ $t->filter_attrs( \&f1, 'noexist' ) };
+    eval{ $t->filter_values( \&f1, 'noexist' ) };
     like( $@, qr/'noexist' is not exist./, 'called from not object' );
 }
 

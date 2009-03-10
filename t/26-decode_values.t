@@ -19,25 +19,25 @@ use Simo::Wrapper;
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    $t->decode_attrs( 'utf8', 'a1' );
+    $t->decode_values( 'utf8', 'a1' );
     is( $t->obj->a1, 'あ', 'string decode' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    $t->decode_attrs( 'utf8', 'a2' );
+    $t->decode_values( 'utf8', 'a2' );
     is_deeply( $t->obj->a2, [ 'あ', 'い' ], 'array string decode' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    $t->decode_attrs( 'utf8', 'a3' );
+    $t->decode_values( 'utf8', 'a3' );
     is_deeply( $t->obj->a3, { a => 'あ', b => 'い' }, 'hash string decode' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    $t->decode_attrs( 'utf8', qw( a1 a2 a3 ) );
+    $t->decode_values( 'utf8', qw( a1 a2 a3 ) );
     is( $t->obj->a1, 'あ', 'mutil attrs decode 1' );
     is_deeply( $t->obj->a2, [ 'あ', 'い' ], 'mutil attrs decode 2' );
     is_deeply( $t->obj->a3, { a => 'あ', b => 'い' }, 'mutil attrs decode 3' );
@@ -45,13 +45,13 @@ use Simo::Wrapper;
 
 {
     my $t = Simo::Wrapper->create( obj => 'Book' );
-    eval{ $t->decode_attrs( 'utf8', 'a1' ) };
+    eval{ $t->decode_values( 'utf8', 'a1' ) };
     like( $@, qr/'decode_values' must be called from object/, 'called from not object' );
 }
 
 {
     my $t = Simo::Wrapper->create( obj => T1->new );
-    eval{ $t->decode_attrs( 'utf8', 'noexist' ) };
+    eval{ $t->decode_values( 'utf8', 'noexist' ) };
     like( $@, qr/'noexist' is not exist./, 'called from not object' );
 }
 
@@ -62,7 +62,7 @@ use Simo::Wrapper;
         $warn = shift;
     };
     
-    $t->decode_attrs( 'utf8', 'a4' );
+    $t->decode_values( 'utf8', 'a4' );
     like( $warn, qr/\$self->{ 'a4' } must be string or array ref or hash ref\. Decode is not done/, 'not string' );
 }
 
@@ -73,7 +73,7 @@ use Simo::Wrapper;
         $warn = shift;
     };
     
-    $t->decode_attrs( 'utf8', 'a5' );
+    $t->decode_values( 'utf8', 'a5' );
     like( $warn, qr/\$self->{ 'a5' }\[ 0 \] must be string\. Decode is not done/, 'not string' );
 }
 
@@ -84,7 +84,7 @@ use Simo::Wrapper;
         $warn = shift;
     };
     
-    $t->decode_attrs( 'utf8', 'a6' );
+    $t->decode_values( 'utf8', 'a6' );
     like( $warn, qr/\$self->{ 'a6' }{ 'a' } must be string\. Decode is not done/, 'not string' );
 }
 

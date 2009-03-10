@@ -27,6 +27,15 @@ t/19-new_from_xml/t1.xml
 t/20-set_attrs_from_objective_hash.t
 t/21-set_attrs_from_xml.t
 t/21-set_attrs_from_xml/t1.xml
+t/22-get_hash.t
+t/23-get_values.t
+t/24-set_values.t
+t/25-encode_values.t
+t/26-decode_values.t
+t/27-filter_values.t
+t/28-set_values_from_objective_hash.t
+t/29-set_values_from_xml.t
+t/29-set_values_from_xml/t1.xml
 t/boilerplate.t
 t/pod-coverage.t
 t/pod.t
