@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0214';
+our $VERSION = '0.0215';
 
 use Carp;
 use Simo::Error;
@@ -433,6 +433,9 @@ sub thaw{
 *set_attrs_from_objective_hash = \&set_values_from_objective_hash;
 *set_attrs_from_xml = \&set_values_from_xml;
 
+1;
+__END__
+
 =head1 NAME
 
 Simo::Wrapper - Wrapper class to manipulate object.
@@ -441,7 +444,7 @@ Simo::Wrapper - Wrapper class to manipulate object.
 
 =head1 VERSION
 
-Version 0.0214
+Version 0.0215
 
 =head1 CAUTION
 
@@ -488,7 +491,7 @@ Please wait until Simo::Wrapper will be stable.
     );
     
     # filter_values
-    o($book)->filter_values(
+    my $result = o($book)->filter_values(
         sub{ uc $_ },
         qw/ title author /,
     );
@@ -557,26 +560,288 @@ I prepare 'connect' method because classes like 'DBI' has 'connect' method as th
     my $dbh = o('DBI')->connect( 'dbi:SQLite:db_name=test_db', '', '' );
 
 
-=head2 obj
-=head2 create
 =head2 build
+
+'build' is the same as 'new' except return Simo::Wrapper object.
+
 =head2 validate
+
+'validate' is the method for validating.
+
+    my $book = Book->new( title => 'Good time', price => 3000);
+    $book->validate(
+        title => sub{ length $_ < 30 },
+        prcie => sub{ $_ > 0 && $_ < 3000 }
+    );
+
+If validator function return false value, 'validate' throw L<Simo::Error> object.
+
+'value_invalid' is set to 'type' field of L<Simo::Error> object.
+
 =head2 new_and_validate
-=head2 new_from_objective_hash
-=head2 new_from_xml
+
+'new_and_validate' construct object and validate object.
+
+You can use 2 type of argument.
+
+First: key-value-validator
+
+    my $book = o('Book')->new_and_validate(
+        title => 'a', sub{ length $_ < 30 },
+        price => 1000, sub{ $_ > 0 && $_ < 50000 },
+        auhtor => 'Kimoto', sub{ 1 }
+    );
+    
+If you do not validate some field, you pass sub{ 1 } to validator.
+
+Second: { key => valu }, { key => validator }
+
+    my $book = o('Book')->new_and_validate(
+        { title => 'a', price => 'b' },
+        { title=> sub{ length $_ < 30 }, price => sub{ $_ > 0 && $_ < 50000 } }
+    );
+
+This method return constructed object.
+
 =head2 get_values
+
+'get_values' get the values.
+
+    my ( $title, $author ) = o($book)->get_values( qw/ title author / );
+
 =head2 get_hash
+
+'get_hash' get the hash of specified fields.
+    
+    my $book = Book->new( title => 'Good cat', author => 'Kimoto', price => 3000 );
+    my $hash = o($book)->get_hash( qw/ title author / );
+
+$hash is that
+
+    {
+        title => 'Good cat',
+        auhtor => 'Kimoto'
+    }
+
 =head2 set_values
+
+'set_values' set values of the object.
+
+    o($book)->set_values( title => 'Good news', author => 'kimoto' );
+
+You can also pass hash reference
+
+    o($book)->set_values( { title => 'Good news', author => 'kimoto' } );
+
+=head2 new_from_objective_hash
+
+'new_from_objective_hash' construct object from a I<objective hash>.
+
+    my $book = o->new_from_objective_hash( $objective_hash );
+
+You maybe hear the name of I<objective hash> at first.
+
+I<objective hash> is the hash that contain the information of object accroding to the following rules.
+
+=over 4
+
+=item 1. '__CLASS' is class name.
+
+=item 2. '__CLASS_CONSTRUCTOR' is object constructor name. If this is ommited, 'new' is used as constructor name.
+
+=back
+
+objective hash sample is
+
+    my $objective_hash = { 
+        __CLASS => 'Book',
+        __CLASS_CONSTRUCTOR => 'new',
+        
+        title => 'Good thing',
+        
+        author => {
+            __CLASS => 'Person',
+            
+            name => 'Kimoto',
+            age => 19,
+            country => 'Japan'
+        },
+        
+        price => 2600
+    };
+
+'Person' object is automatically constructed and set to 'author' field.
+
+After that, 'Book' object is constructed .
+
+=head2 new_from_xml
+
+'new_from_xml' construct object from a XML file.
+
+    my $book = o->new_from_xml( $xml_file );
+
+XML file sample is
+
+    <?xml version="1.0" encoding='UTF-8' ?>
+    <root __CLASS="Book" >
+      <title>Good man</title>
+      
+      <author __CLASS="Person">
+        <name>Kimoto</name>
+        <age>28</age>
+        <country>Japan</country>
+      </author>
+    </root>
+
+You can use the xml using the form of objective hash.
+See also 'new_from_objective_hash'.
+
+The xml parser of this method is 'XML::Simple'.
+See also L<XML::Simple>
+
 =head2 set_values_from_objective_hash
+
+'set_values_from_objective_hash' set values from a I<objective hash>.
+
+    o($book)->set_values_from_objective_hash( $objective_hash );
+
+See also 'new_from_objective_hash'.
+
 =head2 set_values_from_xml
+
+'set_values_from_xml' set values loading from XML file.
+
+    o($book)->set_values_from_xml( $xml_file );
+    
+You can use the xml using the form of objective hash.
+See also 'new_from_objective_hash'.
+
+The xml parser of this method is 'XML::Simple'.
+See also L<XML::Simple>
+
 =head2 run_methods
-=head2 _parse_run_methods_args
+
+'run_methods' call multiple methods.
+
+    my $result = o($book_list)->run_methods(
+        find => [ 'author' => 'kimoto' ],
+        sort => [ 'price', 'desc' ],
+        'get_result'
+    );
+
+This method return the return value of last method
+( this example, retrun value of 'get_result' )
+
+=head2 call
+
+'call' is aliase of 'run_methods'
+
 =head2 filter_values
+
+'filter_values' convert multiple values.
+    
+    o($book)->filter_values( sub{ uc $_ }, qw/ title author / );
+
+$book->title and $book->author is converted to upper case.
+    
+This method also filter the values of array ref.
+
+    $book->author( [ 'Kimoto', 'Matuda' ] );
+    o($book)->filter_values( sub{ uc $_ }, qw/ author / );
+
+'Kimoto' and 'Matuda' is converted to upper case.
+
+This method also filter the values of hash ref.
+
+    $book->info( { country => 'Japan', quality => 'Good' } );
+    o($book)->filter_values( sub{ uc $_ }, qw/ info / );
+
+'Japan' and 'Good' is converted to upper case.
+
+These 'filter_values' logic is used by 'encode_values' and 'decode_values'.
+
 =head2 encode_values
+
+'encode_values' encode multiple values.
+
+    o($book)->encode_values( 'utf8', qw/ title author / );
+
+$book->title and $book->author is encoded.
+
+This method also encode the values of array ref.
+
+    $book->author( [ 'Kimoto', 'Matuda' ] );
+    o($book)->encode_values( 'utf8', qw/ author / );
+
+'Kimoto' and 'Matuda' is encoded.
+
+This method also encode the values of hash ref.
+
+    $book->info( { country => 'Japan', quality => 'Good' } );
+    o($book)->encode_values( 'utf8', qw/ info / );
+
+'Japan' and 'Good' is encoded.
+
 =head2 decode_values
+
+'decode_values' decode multipul values.
+
+    o($book)->decode_values( 'utf8', qw/ title author / );
+
+$book->title and $book->author is decoded.
+
+This method also decode the values of array ref.
+
+    $book->author( [ 'Kimoto', 'Matuda' ] );
+    o($book)->decode_values( 'utf8', qw/ author / );
+
+'Kimoto' and 'Matuda' is decoded.
+
+This method also decode the values of hash ref.
+
+    $book->info( { country => 'Japan', quality => 'Good' } );
+    o($book)->decode_values( 'utf8', qw/ info / );
+
+'Japan' and 'Good' is decoded.
+
 =head2 clone
+
+'clone' copy the object deeply.
+
+    my $book_copy = o($book)->clone;
+
+'clone' is the same as Storable::clone.
+See also L<Storable>
+
 =head2 freeze
+
+'freeze' serialize the object.
+
+    my $book_freezed = o($book)->freeze;
+
+'freeze' is the same as Storable::freeze.
+See also L<Storable>
+
 =head2 thaw
+
+'thaw' resotre the freezed object.
+
+    my $book = o->thaw( $book_freezed );
+
+'thaw' is the same as Storable::thaw.
+See also L<Storable>
+
+=head2 create
+
+'create' is constructor of 'Simo::Wrapper'.
+
+=head2 obj
+
+'obj' is wrapped object.
+    
+    my $book = o($book)->obj;
+
+o($book)->obj is equel to $book.
 
 =cut
 
@@ -634,4 +899,3 @@ under the same terms as Perl itself.
 
 =cut
 
-1; # End of Simo::Wrapper

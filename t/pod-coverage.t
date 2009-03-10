@@ -16,6 +16,6 @@ plan skip_all => "Pod::Coverage $min_pc required for testing POD coverage"
     if $@;
 
 all_pod_coverage_ok(
-    #{ also_private => [ qr/^(obj|create|new|set_attrs|get_attrs|get_attrs_as_hash|run_methods)$/ ] }
-    { also_private => [ qr/^.+$/ ] }
+{ also_private => [ qr/^(decode_attrs|encode_attrs|filter_attrs|get_attrs|get_attrs_as_hash|set_attrs|set_attrs_from_objective_hash|set_attrs_from_xml)$/ ] }
+
 );
