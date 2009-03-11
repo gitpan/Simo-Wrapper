@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0215';
+our $VERSION = '0.0216';
 
 use Carp;
 use Simo::Error;
@@ -444,7 +444,7 @@ Simo::Wrapper - Wrapper class to manipulate object.
 
 =head1 VERSION
 
-Version 0.0215
+Version 0.0216
 
 =head1 CAUTION
 
@@ -511,28 +511,51 @@ Please wait until Simo::Wrapper will be stable.
     my $book = o->new_from_xml( $xml_file );
     o($book)->set_values_from_xml( $xml_file );
     
-=head1 FEATURES
+=head1 DESCRIPTION
 
 Simo::Wrapper is the collection of methods to manipulate a object.
 
-To use a class not calling 'require', use 'new'. 
+=over 4
+
+=item use a class not calling 'require' or 'use'
+
+-> new
+
 'new' automatically load the class, and call 'new' method.
 
-To create a object and validate values, use 'new_and_validate'.
+=item create a object and validate values
 
-To set or get multiple values, use 'set_values', 'get_value', 'get_hash'.
+-> new_and_validate
 
-To call multiple methods, use 'run_methods'.
+=item set or get multiple values
 
-To convert values to other value, use 'filter_values'.
+-> set_values, get_value, get_hash
 
-To encode or decode values, use 'encode_values' or 'decode_values'.
+=item call multiple methods
 
-To clone or freeze or thaw the object, use 'clone', 'freeze' or 'thaw'.
+-> run_methods
 
-To create a object form xml file, use 'new_from_xml'.
+=item convert multiple values
 
-To set values using xml file, use 'set_values_from_xml'.
+-> filter_values
+
+=item encode or decode multiple values
+
+-> encode_values, decode_values
+
+=item clone,freeze or thaw the object
+
+-> clone, freeze, thaw
+
+= item create a object form xml
+
+-> new_from_xml
+
+=item set values from xml
+
+-> set_values_from_xml
+
+=back
 
 Simo::Wrapper is designed to be used from L<Simo::Util> o function.
 See also L<Simo::Util>
@@ -540,7 +563,11 @@ See also L<Simo::Util>
 =head1 FUNCTION
 
 Simo::Wrapper object is usually used from L<Simo::Util> o function,
-so sample is explain using this function.
+so the following sample is explained using this function.
+
+please write this at frist.
+
+    use Simo::Util qw( o );
 
 =head2 new
 
