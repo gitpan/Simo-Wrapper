@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0216';
+our $VERSION = '0.0217';
 
 use Carp;
 use Simo::Error;
@@ -30,6 +30,8 @@ sub new{
     }
     
     croak "'$obj' must be have 'new'." unless $obj->can( 'new' );
+    
+    local $Carp::CarpLevel += 1;
     return $self->obj->new( @_ );
 }
 
@@ -48,6 +50,8 @@ sub connect{
     }
     
     croak "'$obj' must be have 'connect'." unless $obj->can( 'connect' );
+    
+    local $Carp::CarpLevel += 1;
     return $self->obj->connect( @_ );
 }
 
@@ -67,6 +71,8 @@ sub build{
     }
     
     croak "'$obj' must be have 'new'." unless $obj->can( 'new' );
+    
+    local $Carp::CarpLevel += 1;
     $self->obj( $self->obj->new( @_ ) );
     return $self;
 }
@@ -124,6 +130,8 @@ sub new_and_validate{
             push @key_value_pairs, $key, $val;
             push @key_validator_pairs, $key, $validator;
         }
+        
+        local $Carp::CarpLevel += 1;
         return $self->build( @key_value_pairs )->validate( @key_validator_pairs )->obj;
     }
 }
@@ -155,6 +163,8 @@ sub new_from_objective_hash{
     {
         croak "'$class' do not have '$constructor' method." unless $class->can( $constructor );
         no strict 'refs';
+        
+        local $Carp::CarpLevel += 1;
         $obj = $class->$constructor( %args );
     }
     return $obj;
@@ -167,6 +177,8 @@ sub new_from_xml{
     my $objective_hash = XML::Simple->new->XMLin( $xml );
     
     $self->obj( undef );
+    
+    local $Carp::CarpLevel += 1;
     return $self->new_from_objective_hash( $objective_hash );
 }
 
@@ -182,6 +194,8 @@ sub get_values{
     my @vals;
     foreach my $attr ( @attrs ){
         croak "Invalid key '$attr' is passed to get_values" unless $obj->can( $attr );
+        
+        local $Carp::CarpLevel += 1;
         my $val = $obj->$attr;
         push @vals, $val;
     }
@@ -195,6 +209,7 @@ sub get_hash{
     my $obj = $self->obj;
     croak "'get_hash' must be called from object." unless is_object( $obj );
     
+    local $Carp::CarpLevel += 1;
     my @vals = $self->get_values( @attrs );
     
     my %values;
@@ -218,6 +233,7 @@ sub set_values{
     while( my ( $attr, $val ) = splice( @args, 0, 2 ) ){
         croak "Invalid key '$attr' is passed to 'set_values'" unless $obj->can( $attr );
         no strict 'refs';
+        local $Carp::CarpLevel += 1;
         $obj->$attr( $val );
     }
     return $self;
@@ -248,6 +264,7 @@ sub set_values_from_objective_hash{
             $val = Simo::Wrapper->create->new_from_objective_hash( $args{ $attr } );
         }
         no strict 'refs';
+        local $Carp::CarpLevel += 1;
         $obj->$attr( $val );
     }
     return $self;
@@ -274,6 +291,7 @@ sub run_methods{
     while( my $method_info = shift @{ $method_infos } ){
         my ( $method, $args ) = @{ $method_info }{ qw( name args ) };
         
+        local $Carp::CarpLevel += 1;
         if( @{ $method_infos } ){
             $obj->$method( @{ $args } );
         }
@@ -444,7 +462,7 @@ Simo::Wrapper - Wrapper class to manipulate object.
 
 =head1 VERSION
 
-Version 0.0216
+Version 0.0217
 
 =head1 CAUTION
 
