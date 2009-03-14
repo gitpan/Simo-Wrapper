@@ -36,3 +36,10 @@ my $t_dir = 't/19-new_from_xml';
     isa_ok( $obj, 'T1' );
     isa_ok( $obj->m4, 'T2' );
 }
+
+{
+    my $wrapper = Simo::Wrapper->create;
+    eval{ $wrapper->new_from_xml( "$t_dir/t2.xml" ) };
+    like( $@, qr/t2\.xml/, 'xml error' );
+
+}

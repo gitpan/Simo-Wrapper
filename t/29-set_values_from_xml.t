@@ -37,3 +37,11 @@ my $t_dir = 't/29-set_values_from_xml';
     isa_ok( $obj, 'T1' );
     isa_ok( $obj->m4, 'T2' );
 }
+
+{
+    my $obj = T1->new;
+    my $wrapper = Simo::Wrapper->create( obj => $obj );
+    
+    my $xml = eval{ $wrapper->set_values_from_xml( "$t_dir/t2.xml" ) };
+    like( $@, qr/t2\.xml/, 'xml error' );
+}

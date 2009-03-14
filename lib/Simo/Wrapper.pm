@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0218';
+our $VERSION = '0.0219';
 
 use Carp;
 use Simo::Error;
@@ -174,7 +174,12 @@ sub new_from_xml{
     my ( $self, $xml ) = @_;
     require XML::Simple;
     
-    my $objective_hash = XML::Simple->new->XMLin( $xml );
+    my $objective_hash;
+    {
+        local $SIG{ __WARN__ } = sub{};
+        $objective_hash = eval{ XML::Simple->new->XMLin( $xml ) };
+        croak "$@ in $xml" if $@;
+    }
     
     $self->obj( undef );
     
@@ -274,8 +279,12 @@ sub set_values_from_xml{
     my ( $self, $xml ) = @_;
     require XML::Simple;
     
-    my $objective_hash = XML::Simple->new->XMLin( $xml );
-    
+    my $objective_hash;
+    {
+        local $SIG{ __WARN__ } = sub{};
+        $objective_hash = eval{ XML::Simple->new->XMLin( $xml ) };
+        croak "$@ in $xml" if $@;
+    }
     $self->set_values_from_objective_hash( $objective_hash );
     return $self;
 }
@@ -462,7 +471,7 @@ Simo::Wrapper - Wrapper class to manipulate object.
 
 =head1 VERSION
 
-Version 0.0218
+Version 0.0219
 
 =head1 CAUTION
 
