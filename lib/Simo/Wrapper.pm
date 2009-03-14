@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0217';
+our $VERSION = '0.0218';
 
 use Carp;
 use Simo::Error;
@@ -215,7 +215,7 @@ sub get_hash{
     my %values;
     @values{ @attrs } = @vals;
     
-    wantarray ? %values : \%values;
+    return \%values;
 }
 
 # set values
@@ -462,7 +462,7 @@ Simo::Wrapper - Wrapper class to manipulate object.
 
 =head1 VERSION
 
-Version 0.0217
+Version 0.0218
 
 =head1 CAUTION
 
