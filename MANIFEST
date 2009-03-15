@@ -39,6 +39,7 @@ t/29-set_values_from_xml.t
 t/29-set_values_from_xml/t1.xml
 t/29-set_values_from_xml/t2.xml
 t/30-connect.t
+t/31-define.t
 t/boilerplate.t
 t/pod-coverage.t
 t/pod.t

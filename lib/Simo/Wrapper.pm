@@ -1,7 +1,7 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0219';
+our $VERSION = '0.0220';
 
 use Carp;
 use Simo::Error;
@@ -450,6 +450,32 @@ sub thaw{
     return Storable::thaw( $freezed );
 }
 
+sub define{
+    my ( $self, @accessors ) = @_;
+    
+    my $class_name = $self->obj;
+    croak "'define' must be called from class name. '$class_name' is bad."
+        unless is_class_name( $class_name );
+    
+    my $e .=
+        qq/package $class_name;\n/ .
+        qq/use Simo;\n\n/;
+    
+    foreach my $accessor ( @accessors ){
+        croak "accessor must be method name. '$accessor' is bad."
+            unless $accessor =~ /^[a-zA-Z]\w*$/;
+        
+        $e .=
+        qq/sub $accessor { ac }\n/;
+    }
+    
+    $e .=
+        qq/1;\n/;
+    
+    eval $e;
+    croak $@ if $@; # never ocurred
+}
+
 # The following method is renamed. Don't use these method .
 *get_attrs = \&get_values;
 *get_attrs_as_hash = \&get_hash;
@@ -471,7 +497,7 @@ Simo::Wrapper - Wrapper class to manipulate object.
 
 =head1 VERSION
 
-Version 0.0219
+Version 0.0220
 
 =head1 CAUTION
 
@@ -656,6 +682,16 @@ Second: { key => valu }, { key => validator }
     );
 
 This method return constructed object.
+
+=head2 define
+
+'define' define class having some accessors.
+
+    o('Book')->define( qw/title author/ );
+
+You can use Book class after this.
+
+    my $book = Book->new( title => 'Good news', author => 'Kimoto' );
 
 =head2 get_values
 
