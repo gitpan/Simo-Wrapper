@@ -1,7 +1,9 @@
 package Simo::Wrapper;
 use Simo;
 
-our $VERSION = '0.0220';
+### This module is now not recommended. Please do not ues this module.
+
+our $VERSION = '0.0221';
 
 use Carp;
 use Simo::Error;
@@ -491,19 +493,17 @@ __END__
 
 =head1 NAME
 
-Simo::Wrapper - Wrapper class to manipulate object.
+Simo::Wrapper - This module is now not recommended.
 
 =cut
 
 =head1 VERSION
 
-Version 0.0220
+Version 0.0221
 
 =head1 CAUTION
 
-Simo::Wrapper is yet experimental stage.
-
-Please wait until Simo::Wrapper will be stable.
+Simo::Wrapper is now not recommended. Please do not ues this module.
 
 =cut
 
