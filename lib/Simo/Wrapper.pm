@@ -3,7 +3,7 @@ use Simo;
 
 ### This module is now not recommended. Please do not ues this module.
 
-our $VERSION = '0.0221';
+our $VERSION = '0.0301';
 
 use Carp;
 use Simo::Error;
@@ -493,9 +493,15 @@ __END__
 
 =head1 NAME
 
-Simo::Wrapper - This module is now not recommended.
+Simo::Wrapper - Wrapper for Simo [DISCOURAGED]
 
 =cut
+
+=head1 CAUTION
+
+This module is discouraged now, because I develope new module L<Object::Simple>.
+
+L<Object::Simple> is very simple class builder. It is clean, compact, and fast.
 
 =head1 VERSION
 
